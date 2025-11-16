@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVE BAUTISTA - LESSON PLANNER / PLANO NG LEKSYON</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Google Font: M PLUS Rounded 1c -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Load Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- NEW: Load File Generation Libraries -->
+    <!-- For PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- For DOCX Generation -->
+    <script src="https://unpkg.com/html-docx-js-typescript@1.5.0/dist/html-docx.umd.js"></script>
+    <!-- For PPTX Generation (client-side fallback) -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.11.0/dist/pptxgen.bundle.js"></script>
+
+    </script>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+        <!-- ... existing login form HTML ... -->
+        <form id="loginForm" class="glass-card w-full max-w-sm p-8 rounded-3xl shadow-2xl">
+            <h2 class="text-3xl font-extrabold text-white text-center mb-6 title-shadow">Puwesya ng Tagapamahala / Owner Access</h2>
+            <p class="text-white/90 text-center mb-6">Mangyaring ipasok ang iyong kredensyal / Please enter your credentials</p>
+            <div class="mb-4">
+                <label for="usernameInput" class="block text-sm font-bold text-white/90 mb-1">Pangalan ng Gumagamit / Username</label>
+                <input type="text" id="usernameInput" name="username" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="Ipasok ang username / Enter username">
+            </div>
+            <div class="relative">
+                <label for="passwordInput" class="block text-sm font-bold text-white/90 mb-1">Passcode / Password</label>
+                <input type="password" id="passwordInput" name="password" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="••••••••••">
+                <!-- Show/Hide Password Toggle -->
+                <span id="showPasswordToggle" class="absolute inset-y-0 right-0 top-6 flex items-center pr-3 cursor-pointer">
+                    <svg id="eyeIcon" class="h-6 w-6 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <svg id="eyeOffIcon" class="h-6 w-6 text-gray-700 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.996 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.777M6.228 6.228L3 3m3.228 3.228l3.75 3.75M21 21L17.772 17.772m-3.75-3.75L6.228 6.228" />
+                    </svg>
+                </span>
+            </div>
+            <p id="loginError" class="text-yellow-300 font-bold text-center h-5 mt-4 mb-2"></p> <!-- Error message placeholder -->
+            <div class="mt-6 text-center">
+                <button type="submit" class="btn-primary inline-flex justify-center rounded-full py-3 px-10 text-lg font-bold text-white shadow-lg">
+                    Magsimula / Login
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main App Container (Hidden by default) -->
+    <div id="app" class="hidden">
+        <!-- Header/Navigation -->
+        <header class="glass-card sticky top-0 z-10 shadow-lg">
+             <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <!-- Logo/Title -->
+                    <div id="logoButton" class="flex-shrink-0 flex items-center cursor-pointer" data-view="ownerDashboard">
+                        <svg class="h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>
+                        <span class="ml-3 text-2xl font-extrabold text-white title-shadow">PLANO NG LEKSYON</span>
+                    </div>
+                    
+                    <!-- Navigation Links -->
+                    <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+                        <a href="#" class="nav-link px-4 py-2 rounded-full text-sm font-bold" data-view="ownerDashboard">Dashboard / Instrumentasyon</a>
+                        <a href="#" class="nav-link px-4 py-2 rounded-full text-sm font-bold" data-view="profilePage">Profile / Profil</a>
+                        <button id="logoutButton" class="ml-4 inline-flex items-center px-4 py-2 rounded-full text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors shadow-lg">
+                            <svg class="h-5 w-5 mr-2 text-red-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Logout / Lumabas
+                        </button>
+                    </div>
+                    
+                    <!-- Mobile Menu (Simplified) -->
+                    <div class="sm:hidden flex items-center">
+                         <button id="logoutButtonMobile" class="text-sm font-bold text-white bg-red-500/80 rounded-full px-3 py-1 inline-flex items-center">
+                             <svg class="h-4 w-4 mr-1 text-red-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                             Logout
+                         </button>
+                    </div>
+                </div>
+                <!-- Mobile-friendly links -->
+                <div class="sm:hidden flex justify-around p-2">
+                    <a href="#" class="nav-link text-sm font-bold p-2" data-view="ownerDashboard">Dashboard</a>
+                    <a href="#" class="nav-link text-sm font-bold p-2" data-view="profilePage">Profile</a>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+            <!-- NEW: Owner Dashboard (The new main view) -->
+            <section id="ownerDashboard" class="generator-view hidden">
+                <!-- ... existing owner dashboard HTML ... -->
+                    <div class="text-center mb-12">
+                    <h2 class="text-5xl font-extrabold text-white mb-4 title-shadow">Premium Dashboard</h2>
+                    <p class="text-xl text-white/90 font-medium">Welcome, <span id="welcomeUsername" class="font-bold">Ravebautista</span>! Select a tool to begin.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Card 1: Lesson Planner -->
+                    <div class="hub-card glass-card p-6 rounded-3xl cursor-pointer" data-view="lessonPlanDashboard">
+                        <div class="bg-purple-600/70 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+                            <svg class="h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white mb-2">Lesson Planner</h4>
+                        <p class="text-white/80">Generate detailed lesson plans from 15+ templates.</p>
+                    </div>
+                    
+                    <!-- Card 2: DLL Generator -->
+                    <div class="hub-card glass-card p-6 rounded-3xl cursor-pointer" data-view="dllGenerator">
+                        <div class="bg-blue-600/70 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+                             <svg class="h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white mb-2">DLL Generator</h4>
+                        <p class="text-white/80">Lumikha ng Pang-araw-araw na Ulat ng Leksyon / Create weekly Daily Lesson Logs (DLLs) in minutes.</p>
+                    </div>
+
+                    <!-- Card 3: TOS Generator -->
+                    <div class="hub-card glass-card p-6 rounded-3xl cursor-pointer" data-view="tosGenerator">
+                        <div class="bg-green-600/70 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+                            <svg class="h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h.01M15 12h.01M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white mb-2">TOS Generator</h4>
+                        <p class="text-white/80">Lumikha ng Talahanayan ng Mga Pagsusuri / Build your Table of Specifications for exams.</p>
+                    </div>
+
+                    <!-- Card 4: Profile -->
+                    <div class="hub-card glass-card p-6 rounded-3xl cursor-pointer" data-view="profilePage">
+                        <div class="bg-pink-600/70 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+                            <svg class="h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white mb-2">Profil / My Profile</h4>
+                        <p class="text-white/80">Tingnan ang iyong mga detalye ng account / View your account details and settings.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson Plan Dashboard (Sub-view) -->
+            <section id="lessonPlanDashboard" class="generator-view hidden">
+                <!-- ... existing LP dashboard HTML ... -->
+                <div class="flex justify-between items-center mb-6">
+                    <button type="button" class="back-to-hub-btn btn-primary text-white font-bold py-2 px-5 rounded-full inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back
+                    </button>
+                </div>
+                <div class="text-center mb-12">
+                    <h2 class="text-5xl font-extrabold text-white mb-4 title-shadow">Plano ng Leksyon / Lesson Planner</h2>
+                    <p class="text-xl text-white/90 font-medium">Pumili ng uri ng plano upang magsimula ng pagpaplano / Select a plan type to open the AI Generator and start planning instantly!</p>
+                </div>
+
+                <!-- Plan Type Sections -->
+                <div>
+                    <h3 class="text-2xl font-bold text-white/90 mb-4 subtle-shadow">
+                        <svg class="inline h-6 w-6 mr-2 text-orange-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 18h1" />
+                        </svg>
+                        MATATAG & K-12 Weekly
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="MATATAG WEEKLY LESSON PLANNER">
+                            <h4 class="text-lg font-bold text-white">MATATAG WEEKLY LESSON PLANNER</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="K-12 WEEKLY LESSON PLANNER">
+                            <h4 class="text-lg font-bold text-white">K-12 WEEKLY LESSON PLANNER</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="K-12 WEEKLY LESSON PLANNER (Filipino medium of instructions)">
+                            <h4 class="text-lg font-bold text-white">K-12 WEEKLY LESSON PLANNER (Filipino)</h4>
+                        </div>
+                         <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="REVISED K-12 WEEKLY LESSON PLANNER">
+                            <h4 class="text-lg font-bold text-white">REVISED K-12 WEEKLY LESSON PLANNER</h4>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white/90 mb-4 subtle-shadow">
+                        <svg class="inline h-6 w-6 mr-2 text-orange-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 18h1" />
+                        </svg>
+                        SHS, Daily & Multigrade
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="SHS Lesson Planner">
+                            <h4 class="text-lg font-bold text-white">SHS Lesson Planner</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="SHS & K-12 DAILY (not weekly)">
+                            <h4 class="text-lg font-bold text-white">SHS & K-12 DAILY (not weekly)</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="MULTIGRADE LESSON PLANNER">
+                            <h4 class="text-lg font-bold text-white">MULTIGRADE LESSON PLANNER</h4>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white/90 mb-4 subtle-shadow">
+                        <svg class="inline h-6 w-6 mr-2 text-orange-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 18h1" />
+                        </svg>
+                        Detailed Lesson Planners (DLP)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="DETAILED LESSON PLANNER">
+                            <h4 class="text-lg font-bold text-white">DETAILED LESSON PLANNER</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="DETAILED K-12 FORMAT">
+                            <h4 class="text-lg font-bold text-white">DETAILED K-12 FORMAT</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="DETAILED MATATAG FORMAT">
+                            <h4 class="text-lg font-bold text-white">DETAILED MATATAG FORMAT</h4>
+                        </div>
+                         <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="MATATAG DETAILED LESSON PLANNER WITH PMES COI INDICATOR">
+                            <h4 class="text-lg font-bold text-white">MATATAG DLP (PMES COI)</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="DETAILED K-12 FORMAT FOR CO WITH PMES COI INDICATORS">
+                            <h4 class="text-lg font-bold text-white">DETAILED K-12 FOR CO (PMES COI)</h4>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white/90 mb-4 subtle-shadow">
+                        <svg class="inline h-6 w-6 mr-2 text-orange-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 18h1" />
+                        </svg>
+                        Other Formats
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="4A's weekly">
+                            <h4 class="text-lg font-bold text-white">4A's weekly</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="4A's DETAILED (1 DAY)">
+                            <h4 class="text-lg font-bold text-white">4A's DETAILED (1 DAY)</h4>
+                        </div>
+                        <div class="plan-card glass-card p-6 rounded-2xl cursor-pointer" data-plantype="7E's Lesson Planner">
+                            <h4 class="text-lg font-bold text-white">7E's Lesson Planner</h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson Plan Generator (Now a sub-view) -->
+            <section id="lessonPlanGenerator" class="generator-view hidden">
+                <!-- ... existing LP generator HTML ... -->
+                 <div class="flex justify-between items-center mb-6">
+                    <button type="button" id="backToDashboardBtn" class="btn-primary text-white font-bold py-2 px-5 rounded-full inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Bumalik / Back
+                    </button>
+                </div>
+                
+                <form id="lessonPlanForm" class="glass-card p-8 rounded-3xl shadow-2xl">
+                    <fieldset>
+                        <h2 id="lessonPlanTitle" class="text-3xl font-extrabold text-white text-center mb-8 title-shadow">
+                            <svg class="inline h-8 w-8 mr-3 text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 3h15" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 14h12" />
+                            </svg>
+                            Lumilikha ng Plano ng Leksyon / Lesson Plan Generator
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <!-- Left Column -->
+                            <div>
+                                <label for="lp_grade" class="block text-sm font-bold text-white/90 mb-1">Antas ng Grado / Grade Level</label>
+                                <input type="text" id="lp_grade" name="gradeLevel" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Ika-10 Grado / Grade 10">
+                            </div>
+                            <div>
+                                <label for="lp_subject" class="block text-sm font-bold text-white/90 mb-1">Paksa / Subject</label>
+                                <input type="text" id="lp_subject" name="subject" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., English / Wika">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="lp_topic" class="block text-sm font-bold text-white/90 mb-1">Paksa / Lesson Title</label>
+                                <input type="text" id="lp_topic" name="topic" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Pambungad sa Mga Soneto ng Shakespeare">
+                            </div>
+                             <div>
+                                <label for="lp_duration" class="block text-sm font-bold text-white/90 mb-1">Haba ng Oras / Duration</label>
+                                <input type="text" id="lp_duration" name="duration" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., 60 minuto / 60 minutes">
+                            </div>
+                            <div>
+                                <label for="lp_materials" class="block text-sm font-bold text-white/90 mb-1">
+                                    <svg class="inline h-5 w-5 mr-2 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 22v-9M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36zM20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z" />
+                                    </svg>
+                                    Materyales at Kagamitan / Materials &amp; Resources
+                                </label>
+                                <input type="text" id="lp_materials" name="materials" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Pisara, marker, handout">
+                            </div>
+                            <!-- Right Column -->
+                            <div class="md:col-span-2">
+                                <label for="lp_objectives" class="block text-sm font-bold text-white/90 mb-1">
+                                    <svg class="inline h-5 w-5 mr-2 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    Mga Layunin ng Pag-aaral / Learning Objectives
+                                </label>
+                                <textarea id="lp_objectives" name="objectives" rows="4" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="Ilista ang mga layunin / List the objectives, one per line..."></textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="lp_activities" class="block text-sm font-bold text-white/90 mb-1">
+                                    <svg class="inline h-5 w-5 mr-2 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Pangunahing Gawain / Key Activities
+                                </label>
+                                <textarea id="lp_activities" name="activities" rows="4" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="Maikling ilarawan ang daloy / Briefly describe the flow..."></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <button type="submit" class="btn-primary inline-flex justify-center rounded-full py-3 px-10 text-lg font-bold text-white shadow-lg">
+                                Lumikha ng Plano ng Leksyon / Generate Lesson Plan
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </section>
+
+            <!-- DLL Generator -->
+            <section id="dllGenerator" class="generator-view hidden">
+                <!-- ... existing DLL generator HTML ... -->
+                <div class="flex justify-between items-center mb-6">
+                    <button type="button" class="back-to-hub-btn btn-primary text-white font-bold py-2 px-5 rounded-full inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Bumalik / Back
+                    </button>
+                </div>
+                <form id="dllForm" class="glass-card p-8 rounded-3xl shadow-2xl">
+                    <fieldset>
+                        <h2 class="text-3xl font-extrabold text-white text-center mb-8 title-shadow">Pang-araw-araw na Ulat ng Leksyon (DLL) / Daily Lesson Log (DLL) Generator</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <label for="dll_grade" class="block text-sm font-bold text-white/90 mb-1">Antas ng Grado / Grade Level</label>
+                                <input type="text" id="dll_grade" name="gradeLevel" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Ika-7 Grado / Grade 7">
+                            </div>
+                            <div>
+                                <label for="dll_subject" class="block text-sm font-bold text-white/90 mb-1">Paksa / Subject</label>
+                                <input type="text" id="dll_subject" name="subject" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Filipino">
+                            </div>
+                             <div>
+                                <label for="dll_quarter" class="block text-sm font-bold text-white/90 mb-1">Markahan / Quarter</label>
+                                <input type="text" id="dll_quarter" name="quarter" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Unang Markahan / First Quarter">
+                            </div>
+                            <div>
+                                <label for="dll_week" class="block text-sm font-bold text-white/90 mb-1">Linggo / Week</label>
+                                <input type="text" id="dll_week" name="week" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Linggo 3 / Week 3 (Oct 10-14)">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="dll_topic" class="block text-sm font-bold text-white/90 mb-1">Pangunahing Paksa / Main Topic for the Week</label>
+                                <input type="text" id="dll_topic" name="topic" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Ibong Adarna - Mga Tauhan">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="dll_competencies" class="block text-sm font-bold text-white/90 mb-1">Mga Kakayahang Pang-aral / Learning Competencies</label>
+                                <textarea id="dll_competencies" name="competencies" rows="4" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="Ilista ang mga kakayahan mula sa curriculum guide / List the competencies from the curriculum guide..."></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <button type="submit" class="btn-primary inline-flex justify-center rounded-full py-3 px-10 text-lg font-bold text-white shadow-lg">
+                                Lumikha ng DLL / Generate DLL
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </section>
+
+            <!-- TOS Generator -->
+            <section id="tosGenerator" class="generator-view hidden">
+                 <!-- ... existing TOS generator HTML ... -->
+                 <div class="flex justify-between items-center mb-6">
+                    <button type="button" class="back-to-hub-btn btn-primary text-white font-bold py-2 px-5 rounded-full inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Bumalik / Back
+                    </button>
+                </div>
+                <form id="tosForm" class="glass-card p-8 rounded-3xl shadow-2xl">
+                    <fieldset>
+                        <h2 class="text-3xl font-extrabold text-white text-center mb-8 title-shadow">
+                            <svg class="inline h-8 w-8 mr-3 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 11v2" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 17h8" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 16v2" />
+                            </svg>
+                            Talahanayan ng Mga Pagsusuri (TOS) / Table of Specifications Generator
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <label for="tos_grade" class="block text-sm font-bold text-white/90 mb-1">Antas ng Grado / Grade Level</label>
+                                <input type="text" id="tos_grade" name="gradeLevel" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Ika-9 Grado / Grade 9">
+                            </div>
+                            <div>
+                                <label for="tos_subject" class="block text-sm font-bold text-white/90 mb-1">Paksa / Subject</label>
+                                <input type="text" id="tos_subject" name="subject" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Araling Panlipunan">
+                            </div>
+                             <div>
+                                <label for="tos_period" class="block text-sm font-bold text-white/90 mb-1">Grading Period / Markahan</label>
+                                <input type="text" id="tos_period" name="period" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Ikalawang Markahan / Second Grading Period">
+                            </div>
+                             <div>
+                                <label for="tos_items" class="block text-sm font-bold text-white/90 mb-1">Kabuuang Bilang ng Tanong / Total Number of Items</label>
+                                <input type="number" id="tos_items" name="itemCount" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., 50">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="tos_assessmentType" class="block text-sm font-bold text-white/90 mb-1">Type of Assessment</label>
+                                <input type="text" id="tos_assessmentType" name="assessmentType" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., Quarterly Exam, Unit Test">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="tos_topics" class="block text-sm font-bold text-white/90 mb-1">Mga Paksa at Porsyento / Topics &amp; Percentage/Weight</label>
+                                <textarea id="tos_topics" name="topics" rows="4" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="Ilista ang mga paksa at timbang / List topics and their weight, e.g.,&#10;Paksa A - Mga Salik ng Produksyon (40%)&#10;Paksa B - Implasyon (60%)"></textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="tos_competencies" class="block text-sm font-bold text-white/90 mb-1">Mga Kakayahang Pang-aral / Learning Competencies to Assess</label>
+                                <textarea id="tos_competencies" name="competencies" rows="4" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="Ilista ang mga kakayahan / List the specific MELCs or competencies..."></textarea>
+                            </div>
+                             <div class="md:col-span-2">
+                                <label for="tos_cognitive" class="block text-sm font-bold text-white/90 mb-1">Antas ng Kumplikado / Cognitive Level Distribution (e.g., Bloom's)</label>
+                                <input type="text" id="tos_cognitive" name="cognitiveLevels" class="glass-input mt-1 block w-full rounded-lg text-white font-medium py-3 px-4" placeholder="e.g., 60% Tandaan, 30% Pang-araw-araw, 10% Lumikha">
+                            </div>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <button type="submit" class="btn-primary inline-flex justify-center rounded-full py-3 px-10 text-lg font-bold text-white shadow-lg">
+                                Lumikha ng TOS / Generate TOS
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </section>
+
+            <!-- NEW: Profile Page -->
+            <section id="profilePage" class="generator-view hidden">
+                 <div class="flex justify-between items-center mb-6">
+                    <button type="button" class="back-to-hub-btn btn-primary text-white font-bold py-2 px-5 rounded-full inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Bumalik / Back
+                    </button>
+                </div>
+                <div class="glass-card p-8 rounded-3xl shadow-2xl max-w-2xl mx-auto">
+                    <h2 class="text-3xl font-extrabold text-white text-center mb-8 title-shadow">Aking Profil / My Profile</h2>
+                    <div class="text-center mb-8">
+                        <div class="bg-pink-600/70 w-32 h-32 rounded-full flex items-center justify-center shadow-lg mb-4 mx-auto border-4 border-white/50">
+                            <svg class="h-16 w-16 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="glass-input rounded-lg p-4">
+                            <label class="block text-sm font-bold text-white/70 mb-1">
+                                <svg class="inline h-5 w-5 mr-2 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                                </svg>
+                                Email
+                            </label>
+                            <p id="profileEmail" class="text-lg font-bold text-white">rxvebxutista@gmail.com</p>
+                        </div>
+                        <div class="glass-input rounded-lg p-4">
+                            <label class="block text-sm font-bold text-white/70 mb-1">Pangalan ng Gumagamit / Username</label>
+                            <p id="profileUsername" class="text-lg font-bold text-white">Ravebautista</p>
+                        </div>
+                        <div class="glass-input rounded-lg p-4">
+                            <label class="block text-sm font-bold text-white/70 mb-1">Uri ng Account / Account Type</label>
+                            <p class="text-lg font-bold text-white">Premium Owner / Premium na Tagapamahala</p>
+                        </div>
+                        <div class="glass-input rounded-lg p-4">
+                            <label class="block text-sm font-bold text-white/70 mb-1">Passcode / Password</label>
+                            <p class="text-lg font-bold text-white">•••••••••••••••••</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Output Section -->
+            <section id="outputWrapper" class="mt-12">
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="hidden flex-col justify-center items-center p-10">
+                    <div class="pulsing-dot"></div>
+                    <span class="mt-4 text-xl font-bold text-white/90">Lumilikha, mangyaring maghintay... / Generating, please wait...</span>
+                </div>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden glass-card-error p-6 rounded-3xl relative" role="alert">
+                    <svg class="inline h-6 w-6 mr-3 text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 14h-1.343" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.128 3.47A9 9 0 0 1 21 12v3.343" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m2 2 20 20" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.414 20.414A2 2 0 0 1 19 21h-1a2 2 0 0 1-2-2v-3" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 2.636-6.364" />
+                    </svg>
+                    <strong class="font-bold text-white text-lg">Kamalian sa Pagbubuo / Generation Error:</strong>
+                    <span class="block sm:inline text-white/90 mt-2" id="errorText"></span>
+                </div>
+
+                <!-- Generated Output -->
+                <div id="outputContainer" class="hidden glass-card rounded-3xl shadow-2xl overflow-hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-center p-6 border-b border-white/20">
+                        <h3 class="text-2xl font-bold text-white mb-4 sm:mb-0 subtle-shadow">Nabigong Output / Generated Output</h3>
+                        <!-- NEW: Download Buttons -->
+                        <div class="flex items-center space-x-3">
+                            <button id="copyButton" class="download-btn inline-flex items-center">
+                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a2.25 2.25 0 01-2.25 2.25h-3a2.25 2.25 0 01-2.25-2.25V5.25c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V7.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
+                                <span id="copyButtonText">Kopyahin / Copy</span>
+                            </button>
+                            <button id="downloadPdfButton" class="download-btn inline-flex items-center">
+                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                                <span id="pdfButtonText">PDF / I-download bilang PDF</span>
+                            </button>
+                            <button id="downloadDocxButton" class="download-btn inline-flex items-center">
+                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                <span id="docxButtonText">DOCX / I-download bilang DOCX</span>
+                            </button>
+                            <button id="downloadPptxButton" class="download-btn inline-flex items-center">
+                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v16H4z"/></svg>
+                                <span id="pptxButtonText">PPTX</span>
+                            </button>
+                            <button id="testExportsButton" class="download-btn inline-flex items-center" title="Run both PDF and DOCX exports">
+                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                                <span id="testExportsButtonText">Subukan ang Export / Test Exports</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <!-- Content will be injected here -->
+                        <div id="generatedOutput" class="prose prose-lg max-w-none"></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript Module -->
+    <script type="module">
+        // --- Login Configuration ---
+        const correctUsername = "Ravebautista"; 
+        const correctPassword = "Bautista_03202000"; 
+
+        // --- Gemini API Configuration ---
+        // =================================================================
+        // DANGER: PASTE YOUR **NEW, SECRET** API KEY HERE
+        // =================================================================
+        const apiKey = "AIzaSyBzw5-rwh-QebAhN1ABY1ykoVOg1drfZew"; // <--- PASTE YOUR KEY HERE
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // --- DOM Element References ---
+        // Login Elements
+        const loginModal = document.getElementById('loginModal');
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginError = document.getElementById('loginError');
+        const mainApp = document.getElementById('app');
+        const showPasswordToggle = document.getElementById('showPasswordToggle');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+        // App Elements
+        const logoButton = document.getElementById('logoButton'); // <-- NEW
+        const logoutButton = document.getElementById('logoutButton');
+        const logoutButtonMobile = document.getElementById('logoutButtonMobile');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const generatorViews = document.querySelectorAll('.generator-view');
+        
+        // Dashboards and Forms
+        const ownerDashboard = document.getElementById('ownerDashboard');
+        const hubCards = document.querySelectorAll('.hub-card');
+        const lessonPlanDashboard = document.getElementById('lessonPlanDashboard');
+        const planCards = document.querySelectorAll('.plan-card');
+        const lessonPlanGenerator = document.getElementById('lessonPlanGenerator');
+        const lessonPlanTitle = document.getElementById('lessonPlanTitle');
+        const backToDashboardBtn = document.getElementById('backToDashboardBtn');
+        const backToHubBtns = document.querySelectorAll('.back-to-hub-btn');
+
+        // Forms
+        const lessonPlanForm = document.getElementById('lessonPlanForm');
+        const dllForm = document.getElementById('dllForm');
+        const tosForm = document.getElementById('tosForm');
+        
+        // Output Area
+        const outputWrapper = document.getElementById('outputWrapper');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const outputContainer = document.getElementById('outputContainer');
+        const generatedOutput = document.getElementById('generatedOutput');
+        
+        // NEW Download/Copy Buttons
+        const copyButton = document.getElementById('copyButton');
+        const copyButtonText = document.getElementById('copyButtonText');
+        const downloadPdfButton = document.getElementById('downloadPdfButton');
+        const pdfButtonText = document.getElementById('pdfButtonText');
+        const downloadDocxButton = document.getElementById('downloadDocxButton');
+        const downloadPptxButton = document.getElementById('downloadPptxButton');
+        const docxButtonText = document.getElementById('docxButtonText');
+        const testExportsButton = document.getElementById('testExportsButton');
+
+
+        // --- State ---
+        let currentView = 'ownerDashboard'; // Default view is now the NEW Owner Dashboard
+        let currentPlanType = 'DETAILED LESSON PLANNER'; // Default plan type
+        let currentFileName = 'generated-document'; // For downloads
+        let lastFormData = null; // store the last submitted form values to allow server save
+        let authToken = null; // Bearer token from server login (if used)
+        let currentUser = null; // user object from /api/auth/me
+        
+        // --- Core Functions ---
+
+        /**
+          * Initializes the application, sets up event listeners.
+          * This function is now CALLED AFTER successful login.
+          */
+        function initApp() {
+            // -- Navigation Listeners --
+            
+            // Logo Button
+            logoButton.addEventListener('click', () => {
+                showView('ownerDashboard');
+            });
+
+            // Header Nav
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewName = e.target.closest('.nav-link').dataset.view;
+                    if (viewName) {
+                        showView(viewName);
+                    }
+                });
+            });
+
+            // Logout Buttons
+            logoutButton.addEventListener('click', () => location.reload());
+            logoutButtonMobile.addEventListener('click', () => location.reload());
+
+            // Owner Dashboard Hub Cards
+            hubCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const viewName = card.dataset.view;
+                    if(viewName) {
+                        showView(viewName);
+                    }
+                });
+            });
+
+            // Lesson Plan Dashboard Cards
+            planCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const planType = card.dataset.plantype;
+                    showLessonPlanForm(planType);
+                });
+            });
+
+            // Back Button (from LP Form to LP Dashboard)
+            backToDashboardBtn.addEventListener('click', () => {
+                showView('lessonPlanDashboard'); // Go back to the Lesson Plan card list
+            });
+            
+            // Back Buttons (from Generators back to Owner Hub)
+            backToHubBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    showView('ownerDashboard');
+                });
+            });
+
+            // -- Form Submission Listeners --
+            lessonPlanForm.addEventListener('submit', handleFormSubmit);
+            dllForm.addEventListener('submit', handleFormSubmit);
+            tosForm.addEventListener('submit', handleFormSubmit);
+
+            // -- Output Area Listeners --
+            copyButton.addEventListener('click', copyToClipboard);
+            downloadPdfButton.addEventListener('click', downloadPDF);
+            downloadDocxButton.addEventListener('click', downloadDOCX);
+            downloadPptxButton.addEventListener('click', downloadPPTX);
+            if (testExportsButton) {
+                testExportsButton.addEventListener('click', async () => {
+                    const label = document.getElementById('testExportsButtonText');
+                    const original = label ? label.textContent : 'Test Exports';
+                    try {
+                        testExportsButton.disabled = true;
+                        if (label) label.textContent = 'Running...';
+                        await downloadPDF();
+                        await downloadDOCX();
+                    } catch (err) {
+                        console.error('Test exports error:', err);
+                    } finally {
+                        testExportsButton.disabled = false;
+                        if (label) label.textContent = original;
+                    }
+                });
+            }
+
+            // Show initial view
+            showView(currentView);
+
+            // Update welcome username if logged in
+            if (currentUser && document.getElementById('welcomeUsername')) {
+                document.getElementById('welcomeUsername').textContent = currentUser.name || currentUser.email || 'User';
+            }
+        }
+
+        /**
+         * Shows the selected generator view and hides others.
+         * @param {string} viewName - The name of the view to show.
+         */
+        function showView(viewName) {
+            currentView = viewName;
+            
+            // Hide all views
+            generatorViews.forEach(view => view.classList.add('hidden'));
+            
+            // Update nav link styles
+            navLinks.forEach(link => {
+                link.classList.remove('nav-link-active');
+                if (link.dataset.view === viewName || (viewName.startsWith('lessonPlan') && link.dataset.view === 'ownerDashboard')) {
+                    link.classList.add('nav-link-active');
+                }
+            });
+
+            // Show the selected view
+            let activeView;
+            if (viewName === 'lessonPlan') {
+                // 'lessonPlan' is no longer a main view. Redirect to the hub.
+                activeView = ownerDashboard;
+                currentView = 'ownerDashboard';
+            } else {
+                activeView = document.getElementById(viewName);
+            }
+            
+            if (activeView) {
+                activeView.classList.remove('hidden');
+            }
+            
+            // Clear previous output
+            clearOutput();
+            window.scrollTo(0, 0); // Scroll to top
+        }
+
+        /**
+         * Hides dashboard and shows the lesson plan form for a specific plan type.
+         * @param {string} planType - The selected plan type (e.g., "MATATAG WEEKLY").
+         */
+        function showLessonPlanForm(planType) {
+            currentPlanType = planType; // Store the selected plan type
+            
+            // Hide dashboard, show form
+            lessonPlanDashboard.classList.add('hidden');
+            lessonPlanGenerator.classList.remove('hidden');
+            
+            // Update the title of the form
+            lessonPlanTitle.textContent = `${planType}`;
+            
+            // Clear any old output
+            clearOutput();
+            window.scrollTo(0, 0);
+        }
+
+
+        /**
+         * Handles the submission of any generator form.
+         * @param {Event} event - The form submit event.
+         */
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Keep the latest submitted form values so we can save to server if requested
+            lastFormData = data;
+
+            // Set loading state
+            setLoading(true);
+            clearOutput();
+
+            // Set smart file name for downloads
+            let rawFileName = data.topic || data.subject || 'generated-document';
+            currentFileName = rawFileName.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 50);
+
+            // --- Prompt Engineering ---
+            let systemPrompt = "You are an expert educator and curriculum designer (DepEd standards). You MUST format your entire response in GitHub-flavored MARKDOWN. This is crucial. Use tables for DLLs and TOS, and proper headings (#, ##) and lists (-, *) for lesson plans.";
+            let userQuery = "";
+
+            try {
+                if (form.id === 'lessonPlanForm') {
+                    userQuery = `
+                        Generate a lesson plan using the specific format: "${currentPlanType}".
+                        
+                        Please be detailed and comprehensive, ensuring all required sections for that format are included.
+                        Base the content on the following details:
+
+                        - Grade Level: ${data.gradeLevel}
+                        - Subject: ${data.subject}
+                        - Topic: ${data.topic}
+                        - Duration: ${data.duration}
+                        - Materials: ${data.materials}
+                        - Learning Objectives: \n${data.objectives}
+                        - Key Activities/Structure: ${data.activities}
+
+                        Remember to format the ENTIRE response in Markdown.
+                    `;
+                } else if (form.id === 'dllForm') {
+                    userQuery = `
+                        Generate a Daily Lesson Log (DLL) for a full week (Monday to Friday) based on the following details.
+                        You MUST format this as a Markdown table.
+                        The table columns should be: Day, Objectives, Content Standards, Performance Standards, Learning Competencies, Procedure (brief outline), Remarks, and Reflection.
+
+                        Details:
+                        - Grade Level: ${data.gradeLevel}
+                        - Subject: ${data.subject}
+                        - Quarter: ${data.quarter}
+                        - Week: ${data.week}
+                        - Main Topic/Content: ${data.topic}
+                        - Learning Competencies for the week: \n${data.competencies}
+
+                        Remember to format the ENTIRE response as a single, large Markdown table.
+                    `;
+                } else if (form.id === 'tosForm') {
+                    userQuery = `
+                        Generate a Table of Specifications (TOS) for an assessment.
+                        You MUST format this as a Markdown table.
+                        The table columns should be: Topic/Content Area, Learning Competencies, Cognitive Level (e.g., Remembering, Applying, etc.), Number of Items, and Item Placement (e.g., 1-5).
+                        Calculate the number of items for each topic based on the provided percentages. Ensure the total number of items matches the requested total. Distribute items across cognitive levels as specified.
+
+                        Details:
+                        - Grade Level: ${data.gradeLevel}
+                        - Subject: ${data.subject}
+                        - Grading Period: ${data.period}
+                        - Type of Assessment: ${data.assessmentType}
+                        - Total Number of Items: ${data.itemCount}
+                        - Topics and Percentage/Weight: \n${data.topics}
+                        - Learning Competencies to Assess: \n${data.competencies}
+                        - Cognitive Level Distribution: ${data.cognitiveLevels}
+                        
+                        Remember to format the ENTIRE response as a Markdown table.
+                    `;
+                }
+
+                // Call the API
+                const result = await generateContent(systemPrompt, userQuery);
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (text) {
+                    // Use marked.js to convert Markdown to HTML
+                    generatedOutput.innerHTML = marked.parse(text);
+                    outputContainer.classList.remove('hidden');
+                } else {
+                    showError("The API returned an empty response. Please try refining your inputs.");
+                }
+
+            } catch (error) {
+                console.error('Error generating content:', error);
+                let userMessage = error.message || "An unknown error occurred. Please check the console.";
+                // NEW: Specific error for API key
+                if (userMessage.includes("API key") || userMessage.includes("400")) {
+                    userMessage = "Generation Failed. This may be due to an invalid API Key. Please make sure your API key is correctly added to the index.html file."
+                }
+                showError(userMessage);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        /**
+         * Calls the Gemini API with exponential backoff.
+         * @param {string} systemPrompt - The system instruction for the model.
+         * @param {string} userQuery - The user's query.
+         */
+        async function generateContent(systemPrompt, userQuery) {
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            // Use the fetchWithBackoff helper
+            return fetchWithBackoff(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        /**
+         * A fetch wrapper with exponential backoff.
+         * @param {string} url - The URL to fetch.
+         * @param {object} options - The fetch options.
+         * @param {number} retries - Number of retries left.
+         * @param {number} delay - Current delay in ms.
+         */
+        async function fetchWithBackoff(url, options, retries = 5, delay = 1000) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    // Throw an error to be caught by the retry logic
+                    const errorData = await response.json();
+                    throw new Error(`API Error (${response.status}): ${errorData.error?.message || response.statusText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                if (retries > 0) {
+                    // Do not log retry attempts to console
+                    await new Promise(res => setTimeout(res, delay));
+                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                } else {
+                    // All retries failed, throw the last error
+                    throw error;
+                }
+            }
+        }
+        
+        // --- UI Helper Functions ---
+
+        /**
+         * Sets the loading state for the UI.
+         * @param {boolean} isLoading - True to show loading, false to hide.
+         */
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loadingSpinner.classList.remove('hidden');
+            } else {
+                loadingSpinner.classList.add('hidden');
+            }
+            
+            // Disable/enable all forms
+            document.querySelectorAll('form fieldset').forEach(fs => {
+                fs.disabled = isLoading;
+            });
+        }
+
+        /**
+         * Clears all output and error messages.
+         */
+        function clearOutput() {
+            outputContainer.classList.add('hidden');
+            generatedOutput.innerHTML = '';
+            errorMessage.classList.add('hidden');
+            errorText.textContent = '';
+        }
+
+        /**
+         * Shows an error message in the UI.
+         * @param {string} message - The error message to display.
+         */
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        /**
+         * Copies the generated text to the clipboard.
+         */
+        function copyToClipboard() {
+            // Copy the text content, not the HTML
+            const textToCopy = generatedOutput.innerText;
+            
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = textToCopy;
+            tempTextarea.style.position = 'absolute';
+            tempTextarea.style.left = '-9999px';
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            
+            try {
+                document.execCommand('copy');
+                copyButtonText.textContent = 'Copied!';
+                setTimeout(() => { copyButtonText.textContent = 'Copy'; }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                copyButtonText.textContent = 'Failed!';
+                setTimeout(() => { copyButtonText.textContent = 'Copy'; }, 2000);
+            }
+            
+            document.body.removeChild(tempTextarea);
+        }
+
+        // --- NEW: Download Functions ---
+
+        /**
+         * Downloads the generated output as a PDF file.
+         */
+        async function downloadPDF() {
+            pdfButtonText.textContent = 'Saving...';
+            downloadPdfButton.disabled = true;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+            
+            try {
+                // Render using a temporary wrapper that forces Times New Roman 12pt
+                const temp = document.createElement('div');
+                // Copy content and apply print-friendly styles
+                temp.style.fontFamily = "'Times New Roman', Times, serif";
+                temp.style.fontSize = '12pt';
+                temp.style.color = 'black';
+                temp.style.background = 'white';
+                temp.style.padding = '10px';
+                temp.innerHTML = generatedOutput.innerHTML;
+                // Inline images (try direct fetch first, then proxy if CORS blocks)
+                try {
+                    await inlineImagesWithProxy(temp);
+                } catch (errInline) {
+                    console.warn('Could not inline all images for PDF export:', errInline);
+                }
+                // Append offscreen to allow images/fonts to load
+                temp.style.position = 'absolute';
+                temp.style.left = '-9999px';
+                document.body.appendChild(temp);
+                // Try the built-in HTML renderer first; if content is longer than one page, fallback to manual canvas rendering
+                try {
+                    await doc.html(temp, {
+                        callback: function (pdf) {
+                            pdf.save(`${currentFileName}.pdf`);
+                            // cleanup
+                            document.body.removeChild(temp);
+                            pdfButtonText.textContent = 'PDF';
+                            downloadPdfButton.disabled = false;
+                        },
+                        x: 10,
+                        y: 10,
+                        width: 190, // A4 width 210mm - 20mm margins
+                        windowWidth: Math.max(temp.scrollWidth, generatedOutput.scrollWidth, 800)
+                    });
+                } catch (err) {
+                    // Fallback: create PDF from canvas snapshots for long documents
+                    try {
+                        const canvas = await html2canvas(temp, { scale: 2, useCORS: true });
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgProps = doc.getImageProperties(imgData);
+                        const pdfWidth = doc.internal.pageSize.getWidth();
+                        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                        doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                        doc.save(`${currentFileName}.pdf`);
+                    } catch (err2) {
+                        console.error('Fallback PDF error', err2);
+                        pdfButtonText.textContent = 'Failed!';
+                        downloadPdfButton.disabled = false;
+                        setTimeout(() => { pdfButtonText.textContent = 'PDF'; }, 2000);
+                    } finally {
+                        document.body.removeChild(temp);
+                    }
+                }
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                pdfButtonText.textContent = 'Failed!';
+                downloadPdfButton.disabled = false;
+                setTimeout(() => { pdfButtonText.textContent = 'PDF'; }, 2000);
+            }
+        }
+
+        /**
+         * Downloads the generated output as a DOCX file.
+         */
+        async function downloadDOCX() {
+            docxButtonText.textContent = 'Saving...';
+            downloadDocxButton.disabled = true;
+
+            try {
+                // Clone generated HTML to avoid mutation during processing
+                const clone = generatedOutput.cloneNode(true);
+                // Inline remote images (try direct fetch then proxy)
+                try {
+                    await inlineImagesWithProxy(clone);
+                } catch (errInline) {
+                    console.warn('Could not inline all images for DOCX export:', errInline);
+                }
+                // Remove any scripts and interactive elements that shouldn't be in exported docs
+                clone.querySelectorAll('script, button, input, textarea, select').forEach(el => el.remove());
+
+                const htmlString = clone.innerHTML;
+
+                // We need to wrap the HTML in a full document structure for the library
+                const fullHtml = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <style>
+                            /* Use Times New Roman and 12pt for DOCX */
+                            body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; }
+                            table { border-collapse: collapse; width: 100%; }
+                            th, td { border: 1px solid black; padding: 8px; }
+                            th { background-color: #f2f2f2; }
+                            h1 { font-size: 16pt; }
+                            h2 { font-size: 14pt; }
+                            h3 { font-size: 12pt; }
+                        </style>
+                    </head>
+                    <body>${htmlString}</body>
+                    </html>
+                `;
+
+                // Robustly find the library export
+                const asBlob = window.htmlDocx?.asBlob || window.HtmlDocx?.asBlob || window.htmlDocxJs?.asBlob || (window.htmlDocx && window.htmlDocx.asBlob);
+                if (!asBlob || typeof asBlob !== 'function') {
+                    throw new Error('DOCX export library not found. Make sure html-docx-js-typescript is loaded.');
+                }
+
+                const blob = await asBlob(fullHtml, { 
+                    orientation: 'portrait',
+                    margins: { top: 720, right: 720, bottom: 720, left: 720 } // 1 inch margins
+                });
+
+                // Create and click a download link
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${currentFileName}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                docxButtonText.textContent = 'DOCX';
+                downloadDocxButton.disabled = false;
+
+            } catch (error) {
+                console.error('Error generating DOCX:', error);
+                docxButtonText.textContent = 'Failed!';
+                downloadDocxButton.disabled = false;
+                setTimeout(() => { docxButtonText.textContent = 'DOCX'; }, 2000);
+            }
+        }
+
+        /**
+         * Try to inline images by fetching them. If direct fetch fails (CORS), try the server proxy.
+         * The server proxy endpoint is `/api/proxy/image?url=ENCODED_URL`.
+         */
+        async function inlineImagesWithProxy(node) {
+            const imgs = node.querySelectorAll('img');
+            for (const img of imgs) {
+                const src = img.getAttribute('src');
+                if (!src) continue;
+                if (src.startsWith('data:')) continue;
+
+                // Try direct fetch first
+                try {
+                    const resp = await fetch(src, { mode: 'cors' });
+                    if (!resp.ok) throw new Error('Direct fetch failed');
+                    const blob = await resp.blob();
+                    const dataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                    img.setAttribute('src', dataUrl);
+                    continue;
+                } catch (err) {
+                    // fall through to proxy attempt
+                }
+
+                // Try server proxy
+                try {
+                    const proxyUrl = `/api/proxy/image?url=${encodeURIComponent(src)}`;
+                    const presp = await fetch(proxyUrl);
+                    if (!presp.ok) throw new Error('Proxy fetch failed');
+                    const blob = await presp.blob();
+                    const dataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                    img.setAttribute('src', dataUrl);
+                } catch (err2) {
+                    console.warn('Could not inline image (direct or proxy):', src, err2);
+                }
+            }
+        }
+
+        /**
+         * Downloads the generated output as a PowerPoint/Slides (PPTX) file.
+         * Uses PptxGenJS on the client as a fallback; server-side endpoint also exists.
+         */
+        async function downloadPPTX() {
+            const label = document.getElementById('pptxButtonText');
+            const original = label ? label.textContent : 'PPTX';
+            try {
+                if (label) label.textContent = 'Saving...';
+                downloadPptxButton.disabled = true;
+
+                // Attempt server-side workflow first (save plan -> download server-generated PPTX)
+                if (lastFormData && authToken) {
+                    try {
+                        const token = authToken;
+
+                        // Build lesson plan payload from lastFormData (map fields)
+                        const payload = {
+                            subject: lastFormData.subject || '',
+                            grade_level: lastFormData.gradeLevel || lastFormData.grade_level || '',
+                            topic: lastFormData.topic || '',
+                            objectives: lastFormData.objectives || '',
+                            materials: lastFormData.materials || '',
+                            procedure: lastFormData.activities || lastFormData.procedure || '',
+                            assessment: lastFormData.assessment || '',
+                            notes: lastFormData.notes || ''
+                        };
+
+                        const createResp = await fetch('/api/lesson-plans', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (createResp.ok) {
+                            const plan = await createResp.json();
+                            const planId = plan.id;
+
+                            // Download server-generated PPTX
+                            const pptResp = await fetch(`/api/lesson-plans/${encodeURIComponent(planId)}/download/powerpoint`, {
+                                method: 'GET',
+                                headers: { 'Authorization': `Bearer ${token}` }
+                            });
+
+                            if (pptResp.ok) {
+                                const blob = await pptResp.blob();
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `${currentFileName}.pptx`;
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                URL.revokeObjectURL(url);
+                                if (label) label.textContent = original;
+                                return; // success
+                            } else {
+                                console.warn('Server PPTX download failed, falling back to client-side PPTX');
+                            }
+                        } else {
+                            console.warn('Creating lesson plan on server failed, falling back to client-side PPTX');
+                        }
+                    } catch (serverErr) {
+                        console.warn('Server PPTX flow failed, falling back to client-side PPTX', serverErr);
+                    }
+                } else if (!authToken) {
+                    console.warn('No auth token available — skipping server PPTX flow');
+                }
+
+                // Fallback client-side PPTX generation using PptxGenJS
+                // Build slide sections from generated HTML.
+                const clone = generatedOutput.cloneNode(true);
+
+                // Normalize headings to h2 for slides
+                clone.querySelectorAll('h1, h3, h4, h5, h6').forEach(h => h.tagName = 'H2');
+
+                const children = Array.from(clone.children);
+                const slides = [];
+
+                let current = { title: '', content: [] };
+                function pushCurrent() {
+                    if (current.title || current.content.length) slides.push({ ...current });
+                    current = { title: '', content: [] };
+                }
+
+                for (const node of children) {
+                    if (node.tagName === 'H2') {
+                        // Start a new slide
+                        if (current.title || current.content.length) pushCurrent();
+                        current.title = node.innerText.trim();
+                    } else {
+                        // Append content text
+                        const text = node.innerText && node.innerText.trim();
+                        if (text) current.content.push(text);
+                    }
+                }
+                pushCurrent();
+
+                // If no slides detected, put entire content in a single slide
+                if (slides.length === 0) {
+                    slides.push({ title: '', content: [clone.innerText.trim()] });
+                }
+
+                // Create PPTX
+                const pptx = new PptxGenJS();
+                slides.forEach(s => {
+                    const slide = pptx.addSlide();
+                    if (s.title) slide.addText(s.title, { x: 0.5, y: 0.2, w: 9, h: 1.0, fontSize: 28, bold: true, color: '363636' });
+                    const lines = s.content.join('\n\n');
+                    // split and reduce to avoid too large text on one slide
+                    const MAX_CHARS = 1200;
+                    if (lines.length <= MAX_CHARS) {
+                        slide.addText(lines, { x: 0.5, y: s.title ? 1.2 : 0.5, w: 9, h: 5.0, fontSize: 18, color: '2F4F4F' });
+                    } else {
+                        // chunk the long content into separate slides
+                        const chunks = [];
+                        for (let i = 0; i < lines.length; i += MAX_CHARS) {
+                            chunks.push(lines.substring(i, i + MAX_CHARS));
+                        }
+                        // first slide used above; add subsequent
+                        slide.addText(chunks[0], { x: 0.5, y: s.title ? 1.2 : 0.5, w: 9, h: 5.0, fontSize: 18, color: '2F4F4F' });
+                        for (let i = 1; i < chunks.length; ++i) {
+                            const s2 = pptx.addSlide();
+                            s2.addText(chunks[i], { x: 0.5, y: 0.5, w: 9, h: 5.0, fontSize: 18, color: '2F4F4F' });
+                        }
+                    }
+                });
+
+                await pptx.writeFile({ fileName: `${currentFileName}.pptx` });
+            } catch (err) {
+                console.error('PPTX export error', err);
+                if (label) label.textContent = 'Failed!';
+                setTimeout(() => { if (label) label.textContent = original; }, 2000);
+            } finally {
+                downloadPptxButton.disabled = false;
+            }
+        }
+
+
+        /**
+         * Handles the login attempt.
+         */
+        async function handleLogin(event) {
+            event.preventDefault();
+            const entered = usernameInput.value && usernameInput.value.trim();
+            const enteredPassword = passwordInput.value && passwordInput.value.trim();
+
+            // Try server login first (entered should be email)
+            try {
+                const resp = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: entered, password: enteredPassword })
+                });
+
+                if (resp.ok) {
+                    const body = await resp.json();
+                    authToken = body.access_token;
+
+                    // Fetch user info
+                    try {
+                        const meResp = await fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${authToken}` } });
+                        if (meResp.ok) {
+                            currentUser = await meResp.json();
+                        }
+                    } catch (meErr) {
+                        console.warn('Could not fetch user profile after login', meErr);
+                    }
+
+                    // Success: hide modal and init app
+                    loginModal.style.transition = 'opacity 0.5s ease';
+                    loginModal.style.opacity = '0';
+                    setTimeout(() => {
+                        loginModal.classList.add('hidden');
+                        mainApp.classList.remove('hidden');
+                        initApp();
+                        // Update profile and welcome UI
+                        if (currentUser) {
+                            const welcome = document.getElementById('welcomeUsername');
+                            if (welcome) welcome.textContent = currentUser.name || currentUser.email;
+                            const pe = document.getElementById('profileEmail');
+                            const pu = document.getElementById('profileUsername');
+                            if (pe) pe.textContent = currentUser.email || '';
+                            if (pu) pu.textContent = currentUser.name || '';
+                        }
+                    }, 500);
+
+                    return;
+                }
+            } catch (err) {
+                console.warn('Server login failed, falling back to local check', err);
+            }
+
+            // Local fallback (offline/demo) using static credentials
+            if (entered === correctUsername && enteredPassword === correctPassword) {
+                loginModal.style.transition = 'opacity 0.5s ease';
+                loginModal.style.opacity = '0';
+                setTimeout(() => {
+                    loginModal.classList.add('hidden');
+                    mainApp.classList.remove('hidden');
+                    // Use local user info
+                    currentUser = { name: correctUsername, email: 'rxvebxutista@gmail.com' };
+                    initApp();
+                    const welcome = document.getElementById('welcomeUsername');
+                    if (welcome) welcome.textContent = currentUser.name;
+                    const pe = document.getElementById('profileEmail');
+                    const pu = document.getElementById('profileUsername');
+                    if (pe) pe.textContent = currentUser.email;
+                    if (pu) pu.textContent = currentUser.name;
+                }, 500);
+            } else {
+                // Failure
+                loginError.textContent = "Incorrect username or password.";
+                loginForm.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    loginForm.style.animation = '';
+                    usernameInput.value = '';
+                    passwordInput.value = '';
+                    usernameInput.focus();
+                }, 500);
+            }
+        }
+
+        // --- Start the App ---
+        // We don't initialize the full app, just the login listener.
+        document.addEventListener('DOMContentLoaded', () => {
+            loginForm.addEventListener('submit', handleLogin);
+            
+            // Add Show/Hide Password listener
+            showPasswordToggle.addEventListener('click', () => {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.classList.add('hidden');
+                    eyeOffIcon.classList.remove('hidden');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.classList.remove('hidden');
+                    eyeOffIcon.classList.add('hidden');
+                }
+            });
+        });
+
+        // Add keyframes for shake animation (optional but nice)
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                50% { transform: translateX(10px); }
+                75% { transform: translateX(-10px); }
+                100% { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

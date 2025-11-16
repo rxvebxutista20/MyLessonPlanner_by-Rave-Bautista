@@ -1,0 +1,780 @@
+/* Extracted styles from index.html */
+
+/* Theme tokens: easier palette customization */
+:root {
+    --bg-deep: #071028;        /* darkest */
+    --bg-deeper: #0f2a46;      /* deep-faded blue */
+    --bg-mid: #214f73;         /* mid blue */
+    --bg-soft: #88a7bd;        /* gray-blue soft */
+    --accent: #5eb3ff;         /* highlight blue */
+    --accent-2: #3b82f6;       /* secondary accent */
+    --muted-gray: #cbd5e1;     /* muted gray for overlays */
+    --glass-border: rgba(100, 180, 246, 0.25);
+    --accent-rgb: 94, 179, 255;   /* used for rgba(var(--accent-rgb), 0.5) */
+    --accent2-rgb: 59, 130, 246;
+}
+/* Premium 3D Glass-Morphism Background Animation */
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes glow-pulse {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(var(--accent2-rgb), 0.35)); }
+    50% { filter: drop-shadow(0 0 40px rgba(var(--accent2-rgb), 0.6)); }
+}
+
+.anime-bg {
+    background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-deeper) 25%, var(--bg-mid) 50%, var(--bg-soft) 75%, var(--bg-deeper) 100%);
+    background-size: 400% 400%;
+    animation: gradient-animation 28s ease infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.anime-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(100, 180, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(74, 144, 226, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(148, 163, 184, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.anime-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Soft fog + subtle noise to add texture */
+    background:
+        linear-gradient(180deg, rgba(203, 213, 225, 0.03) 0%, transparent 55%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 6px);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+/* Base body font with premium styling */
+body {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    color: white;
+    background-attachment: fixed;
+    letter-spacing: 0.3px;
+}
+
+/* Premium 3D Glassmorphism Card Style with Enhanced Depth */
+.glass-card {
+    background: rgba(20, 50, 90, 0.12);
+    -webkit-backdrop-filter: blur(25px);
+    backdrop-filter: blur(25px);
+    border-radius: 2rem;
+    border: 1.5px solid rgba(100, 180, 246, 0.25);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(100, 180, 246, 0.2),
+        0 0 60px rgba(100, 180, 246, 0.08);
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(100, 180, 246, 0.1) 0%, transparent 50%);
+    border-radius: 2rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.glass-card:hover {
+    background: rgba(30, 70, 120, 0.16);
+    border-color: rgba(100, 180, 246, 0.5);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(100, 180, 246, 0.3),
+        0 0 80px rgba(100, 180, 246, 0.18);
+    transform: translateY(-4px);
+}
+
+.glass-card:hover::before {
+    opacity: 1;
+}
+
+.glass-card-error {
+    background: rgba(239, 68, 68, 0.15);
+    -webkit-backdrop-filter: blur(25px);
+    backdrop-filter: blur(25px);
+    border-radius: 2rem;
+    border: 1.5px solid rgba(239, 68, 68, 0.5);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 40px rgba(239, 68, 68, 0.15);
+}
+
+/* Premium Modal Backdrop with 3D Effect */
+.modal-backdrop {
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Premium Text Shadow Helpers with Depth */
+.title-shadow {
+    text-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.2),
+        0 0 20px rgba(100, 180, 246, 0.2);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+.subtle-shadow {
+    text-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 10px rgba(100, 180, 246, 0.1);
+}
+
+/* Premium 3D Glassmorphism Input with Enhanced Interaction */
+.glass-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-radius: 1rem;
+    padding: 0.875rem 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.glass-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.glass-input:focus {
+    background: rgba(30, 70, 120, 0.15);
+    outline: none;
+    border-color: rgba(100, 180, 246, 0.8);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 0 20px rgba(100, 180, 246, 0.3),
+        0 0 40px rgba(100, 180, 246, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Premium Button Styles with 3D Effects */
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
+    border: 1.5px solid rgba(100, 180, 246, 0.4);
+    box-shadow: 
+        0 8px 24px rgba(37, 99, 235, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateZ(0);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    pointer-events: none;
+}
+
+.btn-primary:hover {
+    box-shadow: 
+        0 16px 40px rgba(var(--accent2-rgb), 0.36),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 40px rgba(var(--accent-rgb), 0.28);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.btn-primary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+/* Premium Navigation Link Styles with Glassmorphism */
+.nav-link {
+    color: rgba(255, 255, 255, 0.75);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(100, 180, 246, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.nav-link:hover::after {
+    width: 80%;
+}
+
+.nav-link-active {
+    color: white;
+    background: rgba(100, 180, 246, 0.15);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(100, 180, 246, 0.2);
+}
+
+/* Premium Dashboard Card Styles with 3D Depth */
+.plan-card, .hub-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-card::before, .hub-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    transform: scale(0);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+}
+
+.plan-card:hover, .hub-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(100, 180, 246, 0.2);
+    background: rgba(30, 70, 120, 0.15);
+    border-color: rgba(100, 180, 246, 0.4);
+}
+
+.plan-card:hover::before, .hub-card:hover::before {
+    transform: scale(1);
+}
+
+/* Premium Loading Spinner with 3D Animation */
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1;
+        transform: scale(1);
+    } 
+    50% { 
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.pulsing-dot {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(100, 180, 246, 0.9) 0%, rgba(74, 144, 226, 0.5) 100%);
+    border-radius: 50%;
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    box-shadow: 
+        0 0 20px rgba(100, 180, 246, 0.4),
+        inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Premium Prose/Content Styles with Enhanced Readability */
+.prose {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.prose :where(h1, h2, h3, h4, h5, h6):not(:where([class~="not-prose"] *)) {
+    color: white;
+    font-weight: 900;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.prose :where(strong):not(:where([class~="not-prose"] *)) {
+    color: #f0f9ff;
+    font-weight: 700;
+}
+
+.prose :where(a):not(:where([class~="not-prose"] *)) {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 2px solid rgba(var(--accent-rgb), 0.28);
+    transition: all 0.3s ease;
+}
+
+.prose :where(a):hover:not(:where([class~="not-prose"] *)) {
+    color: #d8f3ff;
+    border-bottom-color: var(--accent);
+}
+
+.prose :where(ul > li):not(:where([class~="not-prose"] *))::before {
+    background-color: var(--accent-2, #3b82f6);
+    border-radius: 50%;
+}
+
+.prose :where(ol > li):not(:where([class~="not-prose"] *))::marker {
+    color: var(--accent, #5eb3ff);
+    font-weight: 700;
+}
+
+.prose :where(table):not(:where([class~="not-prose"] *)) {
+    color: white;
+    border-collapse: collapse;
+}
+
+.prose :where(thead, tbody tr):not(:where([class~="not-prose"] *)) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.prose :where(th):not(:where([class~="not-prose"] *)) {
+    color: white;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(217, 70, 239, 0.2) 100%);
+    font-weight: 700;
+    padding: 1rem;
+}
+
+.prose :where(td):not(:where([class~="not-prose"] *)) {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.75rem 1rem;
+}
+
+.prose :where(tbody tr):hover:not(:where([class~="not-prose"] *)) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Premium Download/Action Buttons with 3D Glass Effect */
+.download-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.625rem 1.25rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.download-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+    pointer-events: none;
+}
+
+.download-btn:hover {
+    background: rgba(var(--accent-rgb), 0.12);
+    border-color: rgba(var(--accent-rgb), 0.6);
+    box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(var(--accent-rgb), 0.3),
+        0 0 30px rgba(var(--accent-rgb), 0.25);
+    transform: translateY(-2px);
+}
+
+.download-btn:hover::before {
+    width: 200px;
+    height: 200px;
+}
+
+.download-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ==================== MODERN DARK THEME DASHBOARD ==================== */
+
+/* Modern Text Animation Keyframes */
+@keyframes text-glow {
+    0%, 100% {
+        text-shadow: 
+            0 0 10px rgba(100, 200, 255, 0.3),
+            0 0 20px rgba(100, 200, 255, 0.2),
+            0 0 30px rgba(100, 200, 255, 0.1);
+    }
+    50% {
+        text-shadow: 
+            0 0 20px rgba(100, 200, 255, 0.6),
+            0 0 40px rgba(100, 200, 255, 0.4),
+            0 0 60px rgba(100, 200, 255, 0.2);
+    }
+}
+
+@keyframes text-slide {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes text-fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes gradient-text-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes dark-float {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-6px) translateX(2px); }
+    50% { transform: translateY(0) translateX(0); }
+    75% { transform: translateY(-6px) translateX(-2px); }
+}
+
+/* Dashboard Container - Dark Theme */
+#ownerDashboard, #lessonPlanDashboard, #lessonPlanGenerator, 
+#dllGenerator, #tosGenerator, #profilePage {
+    animation: dark-float 8s ease-in-out infinite;
+}
+
+/* Modern Dark Dashboard Card */
+.hub-card, .plan-card {
+    background: linear-gradient(135deg, #1a2f4a 0%, #1e3a52 50%, #1a2f4a 100%);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    border: 1.5px solid rgba(100, 180, 246, 0.25);
+    border-radius: 1.5rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(100, 180, 246, 0.12),
+        0 0 40px rgba(100, 180, 246, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Card Gradient Overlay */
+.hub-card::before, .plan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(100, 200, 255, 0.1) 50%, transparent 100%);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
+.hub-card:hover::before, .plan-card:hover::before {
+    left: 100%;
+}
+
+/* Dark Theme Hover Effect */
+.hub-card:hover, .plan-card:hover {
+    background: linear-gradient(135deg, #22384d 0%, #263d5a 50%, #22384d 100%);
+    border-color: rgba(100, 180, 246, 0.5);
+    box-shadow: 
+        0 16px 48px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(100, 180, 246, 0.25),
+        0 0 60px rgba(100, 180, 246, 0.2);
+    transform: translateY(-8px) scale(1.03);
+}
+
+/* Dark Card Icon Animation */
+.hub-card > div:first-child, .plan-card > div:first-child {
+    animation: soft-glow 3s ease-in-out infinite;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hub-card:hover > div:first-child, .plan-card:hover > div:first-child {
+    transform: scale(1.25) rotate(-10deg);
+    animation: soft-glow 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(100, 180, 246, 0.5));
+}
+
+/* Modern Dark Text Styling */
+.hub-card h4, .plan-card h4 {
+    color: #b3d9ff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    animation: text-glow 3s ease-in-out infinite;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.hub-card:hover h4, .plan-card:hover h4 {
+    color: #ffffff;
+    animation: text-glow 2s ease-in-out infinite;
+    text-shadow: 0 2px 15px rgba(100, 180, 246, 0.6);
+}
+
+.hub-card p, .plan-card p {
+    color: rgba(179, 217, 255, 0.85);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    transition: color 0.3s ease;
+    animation: text-fade-in 0.8s ease-in-out;
+}
+
+.hub-card:hover p, .plan-card:hover p {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Modern Dark Header Section */
+#ownerDashboard > div:first-child,
+#lessonPlanDashboard > div:first-child {
+    background: linear-gradient(135deg, rgba(26, 47, 74, 0.8) 0%, rgba(30, 58, 82, 0.8) 100%);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(100, 180, 246, 0.2);
+    border-bottom: 2px solid rgba(100, 180, 246, 0.35);
+    padding: 2.5rem 2rem;
+    border-radius: 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(100, 180, 246, 0.15);
+}
+
+/* Dark Grid Container */
+#ownerDashboard .grid, #lessonPlanDashboard .grid {
+    background: linear-gradient(135deg, rgba(26, 47, 74, 0.5) 0%, rgba(30, 58, 82, 0.4) 100%);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 180, 246, 0.15);
+    border-radius: 2rem;
+    padding: 2rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Modern Dark Title with Animated Gradient */
+#ownerDashboard h2, #lessonPlanDashboard h2 {
+    background: linear-gradient(90deg, #5eb3ff 0%, #3b95ff 50%, #5eb3ff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-text-animation 4s ease infinite, text-slide 0.8s ease-out;
+    font-size: 2.8rem;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Dark Subtitle Styling */
+#ownerDashboard > div:first-child p,
+#lessonPlanDashboard > div:first-child p {
+    color: rgba(179, 217, 255, 0.95);
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    animation: text-slide 1s ease-out 0.2s both;
+    letter-spacing: 0.5px;
+}
+
+/* Dark Welcome Text */
+#welcomeUsername {
+    color: #5eb3ff;
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(94, 179, 255, 0.5);
+    animation: text-glow 3s ease-in-out infinite;
+}
+
+/* Modern Dark Prose Content */
+.prose {
+    background: linear-gradient(135deg, rgba(26, 47, 74, 0.8) 0%, rgba(30, 58, 82, 0.8) 100%);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(100, 180, 246, 0.25);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(100, 180, 246, 0.15);
+}
+
+/* Modern Dark Section Dividers */
+h3.text-2xl {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, #5eb3ff 0%, #3b95ff 50%, rgba(94, 179, 255, 0.3) 100%) 1;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    animation: text-slide 0.6s ease-out;
+    transition: all 0.3s ease;
+}
+
+h3.text-2xl:hover {
+    text-shadow: 0 4px 15px rgba(100, 180, 246, 0.5);
+    color: #b3d9ff;
+}
+
+/* Dark Form Container */
+#lessonPlanForm, #dllForm, #tosForm {
+    background: linear-gradient(135deg, rgba(26, 47, 74, 0.9) 0%, rgba(30, 58, 82, 0.8) 100%);
+    border: 1.5px solid rgba(100, 180, 246, 0.25);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(100, 180, 246, 0.15),
+        0 0 40px rgba(100, 180, 246, 0.1);
+}
+
+/* Dark Form Title */
+#lessonPlanTitle {
+    animation: text-glow 3s ease-in-out infinite, text-slide 0.8s ease-out;
+}
+
+/* Dark Label Styling */
+label {
+    color: rgba(224, 242, 254, 0.95);
+    font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+label:hover {
+    color: #e0f2fe;
+    text-shadow: 0 2px 8px rgba(100, 200, 255, 0.3);
+}
+
+/* Dark Back Button */
+.back-to-hub-btn, #backToDashboardBtn {
+    background: linear-gradient(135deg, rgba(100, 200, 255, 0.15) 0%, rgba(100, 150, 200, 0.1) 100%);
+    border: 1.5px solid rgba(100, 200, 255, 0.35);
+    color: #e0f2fe;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.2),
+        0 0 20px rgba(100, 200, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+}
+
+.back-to-hub-btn:hover, #backToDashboardBtn:hover {
+    background: linear-gradient(135deg, rgba(100, 200, 255, 0.3) 0%, rgba(100, 180, 220, 0.2) 100%);
+    border-color: rgba(100, 200, 255, 0.6);
+    box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(100, 200, 255, 0.25);
+    transform: translateX(-4px);
+    color: #ffffff;
+}
+
+/* Dark Output Container */
+#outputContainer {
+    background: linear-gradient(135deg, rgba(26, 31, 53, 0.9) 0%, rgba(30, 39, 73, 0.8) 100%);
+    border: 1.5px solid rgba(100, 200, 255, 0.2);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(100, 200, 255, 0.1),
+        0 0 40px rgba(100, 200, 255, 0.08);
+}
+
+/* Dark Output Header */
+#outputContainer > div:first-child {
+    border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+    background: linear-gradient(135deg, rgba(26, 31, 53, 0.6) 0%, rgba(30, 39, 73, 0.5) 100%);
+}
+
+#outputContainer h3 {
+    color: #e0f2fe;
+    animation: text-glow 3s ease-in-out infinite;
+    font-weight: 700;
+}
+
+/* Dark Generated Content */
+#generatedOutput {
+    color: rgba(224, 242, 254, 0.95);
+    animation: text-fade-in 0.8s ease-out;
+}
+
+/* Dark Profile Page */
+#profilePage .glass-input {
+    background: linear-gradient(135deg, rgba(26, 31, 53, 0.8) 0%, rgba(30, 39, 73, 0.6) 100%);
+    border-color: rgba(100, 200, 255, 0.3);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.2),
+        0 0 15px rgba(100, 200, 255, 0.1);
+    color: rgba(224, 242, 254, 0.95);
+}
+
+#profilePage .glass-input:focus {
+    background: linear-gradient(135deg, rgba(26, 31, 53, 0.9) 0%, rgba(30, 39, 73, 0.8) 100%);
+    border-color: rgba(100, 200, 255, 0.6);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.2),
+        0 0 30px rgba(100, 200, 255, 0.3);
+}
+
+#profilePage > div > div {
+    background: linear-gradient(135deg, rgba(26, 31, 53, 0.9) 0%, rgba(30, 39, 73, 0.8) 100%);
+    border: 1.5px solid rgba(100, 200, 255, 0.2);
+}
+
