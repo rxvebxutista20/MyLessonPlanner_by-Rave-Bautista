@@ -382,7 +382,7 @@ async def download_lesson_plan_pdf(plan_id: str, user_id: str = Depends(get_curr
         'CustomTitle',
         parent=styles['Heading1'],
         fontSize=24,
-        textColor=RGBColor(0, 0, 128),
+        textColor=Color(0, 0, 128/255),
         spaceAfter=30,
         alignment=1
     )
